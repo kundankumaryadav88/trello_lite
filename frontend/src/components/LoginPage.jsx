@@ -35,6 +35,14 @@ const LoginPage = () => {
         });
       } else {
         response = await apiService.signup(formData);
+        if (response) {
+          setIsLogin(true);
+          setFormData({
+            email: '',
+            password: '',
+            age: ''
+          });
+        }
       }
 
       if (response.token) {
