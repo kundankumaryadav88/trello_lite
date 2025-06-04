@@ -1,7 +1,4 @@
 const express = require('express');
-const mongoose = require('mongoose');
-const jwt = require('jsonwebtoken');
-const bcrypt = require('bcrypt');
 const cors = require('cors');
 const connectDB = require('./src/config/db');
 const authRoutes = require("./src/routes/authRoutes");
