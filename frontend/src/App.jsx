@@ -1,18 +1,14 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import LoginPage from './components/Login/LoginPage';
-import Dashboard from './pages/Dashboard';
-import { AppProvider } from './context/AppContext';
+import { useApp } from './context/AppContext';
+import Dashboard from './components/Dashboard';
+import LoginPage from './components/LoginPage';
+const App = () => {
+  const { state } = useApp();
 
-const App = () => (
-  <AppProvider>
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<LoginPage />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-      </Routes>
-    </BrowserRouter>
-  </AppProvider>
-);
-
+  return (
+    <div className="App">
+      {state.isAuthenticated ? <Dashboard /> : <LoginPage />}
+    </div>
+  );
+};
 export default App;

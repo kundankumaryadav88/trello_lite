@@ -1,15 +1,18 @@
-import React, { useState } from 'react';
-import { Mail, Lock, User } from 'lucide-react';
-import { useAuth } from '../../hooks/useAuth';
+import React, { useState } from 'react'
+import apiService from '../services/apiService';
+import { useApp } from '../context/AppContext';
+import { Plus, Edit3, Trash2, Calendar, User, Lock, Mail, LogOut, GripVertical } from 'lucide-react';
 
 const LoginPage = () => {
-  const { login, signup, loading, error } = useAuth();
+  const { dispatch } = useApp();
   const [isLogin, setIsLogin] = useState(true);
   const [formData, setFormData] = useState({
     email: '',
     password: '',
     age: ''
   });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const handleInputChange = (e) => {
     setFormData({
@@ -18,11 +21,33 @@ const LoginPage = () => {
     });
   };
 
-  const handleSubmit = async () => {
-    if (isLogin) {
-      await login(formData.email, formData.password);
-    } else {
-      await signup(formData);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+
+    try {
+      let response;
+      if (isLogin) {
+        response = await apiService.login({
+          email: formData.email,
+          password: formData.password
+        });
+      } else {
+        response = await apiService.signup(formData);
+      }
+
+      if (response.token) {
+        localStorage.setItem('token', response.token);
+        localStorage.setItem('userData', JSON.stringify(response.user));
+        dispatch({ type: 'SET_USER', payload: response.user });
+      } else {
+        setError(response.message || 'Authentication failed');
+      }
+    } catch (err) {
+      setError('Network error. Please try again.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -57,6 +82,7 @@ const LoginPage = () => {
               onChange={handleInputChange}
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               placeholder="Enter your email"
+              required
             />
           </div>
 
@@ -72,6 +98,7 @@ const LoginPage = () => {
               onChange={handleInputChange}
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               placeholder="Enter your password"
+              required
             />
           </div>
 
@@ -88,6 +115,7 @@ const LoginPage = () => {
                 onChange={handleInputChange}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 placeholder="Enter your age"
+                required
               />
             </div>
           )}
@@ -114,4 +142,5 @@ const LoginPage = () => {
   );
 };
 
-export default LoginPage;
+
+export default LoginPage

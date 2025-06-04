@@ -1,7 +1,9 @@
-import React from 'react';
-import { Edit3, Trash2, Calendar, GripVertical } from 'lucide-react';
+import React, { useState } from 'react'
+import {GripVertical, Edit3, Trash2, Calendar} from 'lucide-react';
 
-const TaskCard = ({ task, onEdit, onDelete }) => {
+const TaskCard = ({ task, onEdit, onDelete, onStatusChange }) => {
+  const [draggedOver, setDraggedOver] = useState(false);
+
   const handleDragStart = (e) => {
     e.dataTransfer.setData('text/plain', task._id);
     e.dataTransfer.effectAllowed = 'move';
@@ -29,7 +31,9 @@ const TaskCard = ({ task, onEdit, onDelete }) => {
     <div
       draggable
       onDragStart={handleDragStart}
-      className="bg-white rounded-lg shadow-md p-4 mb-4 cursor-move hover:shadow-lg transition-shadow"
+      className={`bg-white rounded-lg shadow-md p-4 mb-4 cursor-move hover:shadow-lg transition-shadow ${
+        draggedOver ? 'opacity-50' : ''
+      }`}
     >
       <div className="flex items-start justify-between mb-2">
         <h3 className="font-semibold text-gray-800 flex-1">{task.title}</h3>
@@ -71,4 +75,4 @@ const TaskCard = ({ task, onEdit, onDelete }) => {
   );
 };
 
-export default TaskCard;
+export default TaskCard
